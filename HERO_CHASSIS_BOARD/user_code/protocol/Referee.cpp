@@ -144,25 +144,17 @@ void Referee::init_referee_struct_data(){
     memset(&game_robot_HP_t, 0, sizeof(ext_game_robot_HP_t));
     memset(&field_event, 0, sizeof(ext_event_data_t));
     memset(&supply_projectile_action_t, 0, sizeof(ext_supply_projectile_action_t));
-//delect memset(&supply_projectile_booking_t, 0, sizeof(ext_supply_projectile_booking_t));
+    memset(&supply_projectile_booking_t, 0, sizeof(ext_supply_projectile_booking_t));
     memset(&referee_warning_t, 0, sizeof(ext_referee_warning_t));
     memset(&robot_state, 0, sizeof(ext_game_robot_state_t));
     memset(&power_heat_data_t, 0, sizeof(ext_power_heat_data_t));
     memset(&game_robot_pos_t, 0, sizeof(ext_game_robot_pos_t));
     memset(&buff_musk_t, 0, sizeof(ext_buff_musk_t));
-    memset(&air_support_data_t, 0, sizeof(ext_air_support_data_t));
+    memset(&robot_energy_t, 0, sizeof(aerial_robot_energy_t));
     memset(&robot_hurt_t, 0, sizeof(ext_robot_hurt_t));
     memset(&shoot_data_t, 0, sizeof(ext_shoot_data_t));
-    memset(&projectile_allowance_t, 0, sizeof(ext_projectile_allowance_t));
+    memset(&bullet_remaining_t, 0, sizeof(ext_bullet_remaining_t));
     memset(&student_interactive_data_t, 0, sizeof(ext_student_interactive_data_t));
-
-    memset(&dart_client_cmd_t, 0, sizeof(ext_dart_client_cmd_t));
-    memset(&ground_robot_position_t, 0, sizeof(ext_ground_robot_position_t));
-    memset(&radar_mark_data_t, 0, sizeof(ext_radar_mark_data_t));
-    memset(&sentry_info_t, 0, sizeof(ext_sentry_info_t));
-    memset(&radar_info_t, 0, sizeof(ext_radar_info_t));
-
-
 }
 
 void Referee::referee_data_solve(uint8_t *frame)
@@ -206,11 +198,11 @@ void Referee::referee_data_solve(uint8_t *frame)
         memcpy(&supply_projectile_action_t, frame + index, sizeof(supply_projectile_action_t));
     }
     break;
-    /*case SUPPLY_PROJECTILE_BOOKING_CMD_ID:
+    case SUPPLY_PROJECTILE_BOOKING_CMD_ID:
     {
         memcpy(&supply_projectile_booking_t, frame + index, sizeof(supply_projectile_booking_t));
     }
-    break;*/
+    break;
     case REFEREE_WARNING_CMD_ID:
     {
         memcpy(&referee_warning_t, frame + index, sizeof(ext_referee_warning_t));
@@ -237,9 +229,9 @@ void Referee::referee_data_solve(uint8_t *frame)
         memcpy(&buff_musk_t, frame + index, sizeof(buff_musk_t));
     }
     break;
-    case  AIR_SUPPORT_DATA_ID:
+    case AERIAL_ROBOT_ENERGY_CMD_ID:
     {
-        memcpy(&air_support_data_t, frame + index, sizeof(air_support_data_t));
+        memcpy(&robot_energy_t, frame + index, sizeof(robot_energy_t));
     }
     break;
     case ROBOT_HURT_CMD_ID:
@@ -254,51 +246,14 @@ void Referee::referee_data_solve(uint8_t *frame)
     break;
     case BULLET_REMAINING_CMD_ID:
     {
-        memcpy(&projectile_allowance_t, frame + index, sizeof(ext_projectile_allowance_t));
+        memcpy(&bullet_remaining_t, frame + index, sizeof(ext_bullet_remaining_t));
     }
     break;
-    case RFID_STATUS_CMD_ID:
-    {
-        memcpy(&rfid_status_t, frame + index, sizeof(rfid_status_t));
-    }
-    break;
-
-
-     case DART_CLIENT_CMD_ID:
-    {
-        memcpy(&dart_client_cmd_t, frame + index, sizeof(dart_client_cmd_t));
-    }
-    break;
-     case GROUND_ROBOT_POSITION_CMD_ID:
-    {
-        memcpy(&ground_robot_position_t, frame + index, sizeof(ground_robot_position_t));
-    }
-    break;
-     case RADAR_MARK_DATA_CMD_ID:
-    {
-        memcpy(&radar_mark_data_t, frame + index, sizeof(radar_mark_data_t));
-    }
-    break;
-   
-     case SENTRY_INFO_CMD_ID:
-    {
-        memcpy(&sentry_info_t, frame + index, sizeof(sentry_info_t));
-    }
-    break;
-     case RADAR_INFO_CMD_ID:
-    {
-        memcpy(&radar_info_t, frame + index, sizeof(radar_info_t));
-    }
-    break;
-
-
     case STUDENT_INTERACTIVE_DATA_CMD_ID:
     {
         memcpy(&student_interactive_data_t, frame + index, sizeof(student_interactive_data_t));
     }
     break;
-
-
     default:
     {
         break;
@@ -327,58 +282,50 @@ void Referee::get_chassis_power_limit(fp32 *power_limit)
     
 }
 
-
-//0x201
 //17mm枪口热量上限, 17mm枪口实时热量 默认ID1
 void Referee::get_shooter_id1_17mm_cooling_limit_and_heat(uint16_t *id1_17mm_cooling_limit, uint16_t *id1_17mm_cooling_heat)
 {
-    *id1_17mm_cooling_limit = robot_state.shooter_barrel_heat_limit;
+    *id1_17mm_cooling_limit = robot_state.shooter_id1_17mm_cooling_limit;
     *id1_17mm_cooling_heat = power_heat_data_t.shooter_id1_17mm_cooling_heat;
 }
 
-void Referee::get_shooter_id2_17mm_cooling_limit_and_heat(uint16_t *id2_17mm_cooling_limit, uint16_t *id2_17mm_cooling_heat)
+//17mm枪口枪口射速上限,17mm实时射速 默认ID1
+void Referee::get_shooter_id1_17mm_speed_limit_and_bullet_speed(uint16_t *id1_17mm_speed_limit, fp32 *bullet_speed)
 {
-    *id2_17mm_cooling_limit = robot_state.shooter_barrel_heat_limit;
-    *id2_17mm_cooling_heat = power_heat_data_t.shooter_id2_17mm_cooling_heat;
+    *id1_17mm_speed_limit = robot_state.shooter_id1_17mm_speed_limit;
+    *bullet_speed = shoot_data_t.bullet_speed;
 }
-
-// //17mm枪口枪口射速上限,17mm实时射速 默认ID1
-// void Referee::get_shooter_id1_17mm_speed_limit_and_bullet_speed(uint16_t *id1_17mm_speed_limit, fp32 *bullet_speed)
-// {
-//     *id1_17mm_speed_limit = robot_state.shooter_id1_17mm_speed_limit;
-//     *bullet_speed = shoot_data_t.bullet_speed;
-// }
 
 //17mm枪口热量冷却 默认ID1
 void Referee::get_shooter_id1_17mm_cooling_rate(uint16_t *id1_17mm_cooling_rate)
 {
-    *id1_17mm_cooling_rate = robot_state.shooter_barrel_cooling_value;
+    *id1_17mm_cooling_rate = robot_state.shooter_id1_17mm_cooling_rate;
 }
 
 //42mm枪口热量上限, 42mm枪口实时热量
 void Referee::get_shooter_id1_42mm_cooling_limit_and_heat(uint16_t *id1_42mm_cooling_limit, uint16_t *id1_42mm_cooling_heat)
 {
-    *id1_42mm_cooling_limit = robot_state.shooter_barrel_heat_limit;
+    *id1_42mm_cooling_limit = robot_state.shooter_id1_42mm_cooling_limit;
     *id1_42mm_cooling_heat = power_heat_data_t.shooter_id1_42mm_cooling_heat;
 }
 
-// //42mm枪口枪口射速上限,42mm实时射速
-// void Referee::get_shooter_id1_42mm_speed_limit_and_bullet_speed(uint16_t *id1_42mm_speed_limit, fp32 *bullet_speed)
-// {
-//     *id1_42mm_speed_limit = robot_state.shooter_id1_42mm_speed_limit;
-//     *bullet_speed = shoot_data_t.bullet_speed;
-// }
+//42mm枪口枪口射速上限,42mm实时射速
+void Referee::get_shooter_id1_42mm_speed_limit_and_bullet_speed(uint16_t *id1_42mm_speed_limit, fp32 *bullet_speed)
+{
+    *id1_42mm_speed_limit = robot_state.shooter_id1_42mm_speed_limit;
+    *bullet_speed = shoot_data_t.bullet_speed;
+}
 
 //42mm枪口热量冷却
 void Referee::get_shooter_id1_42mm_cooling_rate(uint16_t *id1_42mm_cooling_rate)
 {
-    *id1_42mm_cooling_rate = robot_state.shooter_barrel_cooling_value;
+    *id1_42mm_cooling_rate = robot_state.shooter_id1_42mm_cooling_rate;
 }
 
 //当前血量
-void Referee::get_remain_hp(uint16_t *current_HP)
+void Referee::get_remain_hp(uint16_t *remain_HP)
 {
-    *current_HP = robot_state.current_HP;
+    *remain_HP = robot_state.remain_HP;
 }
 
 //是否被击打
@@ -389,22 +336,20 @@ bool_t Referee::if_hit()
 
     //初始化血量记录
     if (last_hp == 0)
-        last_hp = robot_state.current_HP;
+        last_hp = robot_state.remain_HP;
 
     if (hp_detect_time++ > 300)
     {
-        last_hp = robot_state.current_HP;
+        last_hp = robot_state.remain_HP;
         hp_detect_time = 0;
     }
 
     //受到高于10点的伤害,开始扭腰
-    if (last_hp - robot_state.current_HP >= 10)
+    if (last_hp - robot_state.remain_HP >= 10)
         return TRUE;
     else
         return FALSE;
 }
-
-//
 
 /**
   * @brief  判断自己红蓝方
@@ -424,6 +369,7 @@ void Referee::get_color(uint8_t *color)
     {
         *color = RED;
     }
+    //Color = *color;
 }
 /**
   * @brief  判断自身ID，选择客户端ID

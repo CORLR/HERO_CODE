@@ -7,8 +7,6 @@
         "istream": "cpp",
         "ostream": "cpp",
         "sstream": "cpp",
-        "bsp_buzzer.h": "c",
-        "xstring": "cpp",
         "crc8_crc16.h": "c"
     }
 }

@@ -255,14 +255,6 @@ void Chassis::set_contorl()
         //速度限幅
         x.speed_set = fp32_constrain(vx_set, x.min_speed, x.max_speed);
         y.speed_set = fp32_constrain(vy_set, y.min_speed, y.max_speed);
-        if (super_cap_switch == TRUE && top_switch == FALSE)
-        {
-            chassis_power_limit_chag = CHASSIS_CAP_POWER; //修改功率上限
-        }  
-        else
-        {
-            chassis_power_limit_chag = chassis_power_limit;    //修改功率上限
-        }
     }
     else if (chassis_mode == CHASSIS_VECTOR_RAW)
     {
@@ -360,7 +352,6 @@ void Chassis::power_ctrl()
             can_receive.can_cmd_super_cap_power((uint16_t)(80),(uint16_t)chassis_power_buff,super_cap_switch);
         }
         //设置了机器人id后读取裁判系统对应数据
-        super_cap_switch = TRUE;
         
         //当超电百分比低于阈值5 将超电关闭
         if (can_receive.cap_receive.cap_percentage < 5.0)
@@ -375,7 +366,7 @@ void Chassis::power_ctrl()
     }
     else
     {
-        total_power = referee.power_heat_data_t.chassis_power;
+        total_power = can_receive.cap_receive.bat_power;
     }
 
     cap_increase = chassis_power_ctrl_pid.Increase_pid_calc();

@@ -21,6 +21,8 @@
 #define VISION_LEN_DATA 15		  //数据段长度,可自定义
 #define VISION_SEND_LEN_PACKED 16 //发送数据包长度
 #define VISION_READ_LEN_PACKED 18 //接受数据包长度
+#define VISION_SEND_LEN_PACKED_TEST  //发送数据包长度
+#define VISION_READ_LEN_PACKED_TEST  //接受数据包长度
 
 #define VISION_OFF (0x00)			  //关闭视觉
 #define VISION_RED (0x01)			  //识别红色
@@ -85,6 +87,7 @@ typedef __packed struct // 3 Byte
 // STM32接收,直接将串口接收到的数据拷贝进结构体 18帧
 typedef __packed struct // 18 Byte
 {
+	//谭佬
 	/* 头 */
 	uint8_t BEGIN; //帧头起始位,暂定0xA5
 	uint8_t CmdID; //指令
@@ -96,10 +99,35 @@ typedef __packed struct // 18 Byte
 	uint8_t centre_lock;	 //是否瞄准到了中间  0没有  1瞄准到了
 	uint8_t identify_target; //视野内是否有目标/是否识别到了目标   0否  1是
 	uint8_t identify_buff;	 //打符时是否识别到了目标，1是，2识别到切换了装甲，0没识别到
-
 	uint8_t END;
 
 } VisionRecvData_t;
+
+
+typedef __packed struct
+{
+	/* 头 */
+	uint8_t BEGIN; //帧头起始位,暂定0xA5
+	///新版视觉通讯
+	//魏佬
+	bool tracking;		//火控
+	int id;
+	int armors_num;		 //装甲板编号
+	uint8_t reserved;		//视觉组说不知道是什么
+	float x;				//视觉组识别到的X
+	float y;				//视觉组识别到的Y
+	float z;				//视觉组识别到的Z
+	float yaw;				//视觉组识别到的yaw
+	float v_x;				//观测出来的Vx
+	float v_y;				//观测出来的Vy
+	float v_z;				//观测出来的Vz
+	float v_yaw;			//观测出来的Vyaw
+	float r1;				//视觉组说不知道是什么
+	float r2;				//视觉组说不知道是什么
+	float dz;				//摄像头到枪管的偏置
+	uint16_t checksum;
+
+} VisionRecvData_test_t;
 
 // STM32发送,直接将打包好的数据一个字节一个字节地发送出去
 typedef __packed struct
@@ -118,6 +146,26 @@ typedef __packed struct
 	uint8_t END;
 
 } VisionSendData_t;
+
+typedef __packed struct
+{
+	uint8_t BEGIN; //帧头起始位,暂定0xA5
+	uint8_t detect_color;
+	bool reset_tracker;
+	float roll;
+	float pitch;
+	float yaw;
+	///新版视觉通讯
+	//魏佬
+	float aim_x;
+	
+	float aim_y;
+
+	float aim_z;
+
+	uint16_t checksum;
+} VisionSendData_test_t;
+
 
 extern uint8_t CmdID;
 extern UART_HandleTypeDef huart1;

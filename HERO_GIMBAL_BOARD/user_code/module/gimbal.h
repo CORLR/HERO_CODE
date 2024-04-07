@@ -20,14 +20,14 @@ extern "C"
 #include "gimbal_task.h"
 /*------------------------速度环pid-----------------------------*/
 // yaw 速度环
-#define YAW_SPEED_PID_KP 1400.0f//2000
-#define YAW_SPEED_PID_KI 0.02f
-#define YAW_SPEED_PID_KD 100.0f
+#define YAW_SPEED_PID_KP 2000.0f
+#define YAW_SPEED_PID_KI 0.0f
+#define YAW_SPEED_PID_KD 0.0f
 #define YAW_SPEED_PID_MAX_IOUT 200.0f
 #define YAW_SPEED_PID_MAX_OUT 20000.0f
 
 // pitch 速度环
-#define PITCH_SPEED_PID_KP 1500.0f // 2900
+#define PITCH_SPEED_PID_KP 2900.0f // 2900
 #define PITCH_SPEED_PID_KI 0.0f
 #define PITCH_SPEED_PID_KD 0.0f
 #define PITCH_SPEED_PID_MAX_IOUT 25.0f
@@ -125,8 +125,8 @@ extern "C"
 #define ECD_RANGE 8191
 
 //云台中值(中值所对应的编码器编码值)
-#define ECD_YAW_MID 3747//反向7835
-#define ECD_PITCH_MID 4292
+#define ECD_YAW_MID 3677//反向7835
+#define ECD_PITCH_MID 4333
 #define ECD_YAW_REAR_MID 7835
 //限幅
 #define MAX_GYRO_YAW 2*PI
@@ -135,11 +135,11 @@ extern "C"
 #define MAX_ENCODE_YAW 2*PI
 #define MIN_ENCODE_YAW -2*PI
 
-#define MAX_ENCODE_PITCH 0.70f
-#define MIN_ENCODE_PITCH -0.45f
+#define MAX_ENCODE_PITCH 0.5f
+#define MIN_ENCODE_PITCH -0.40f
 
-#define MAX_GYRO_PITCH 0.75f
-#define MIN_GYRO_PITCH -0.40f
+#define MAX_GYRO_PITCH 0.4f
+#define MIN_GYRO_PITCH -0.4f
 //云台朝向状态
 #define GIMBAL_AHEAD 0 //云台朝向前方
 #define GIMBAL_REAR  1 //云台朝向后方
@@ -231,6 +231,7 @@ public:
 
     Gimbal_motor gimbal_yaw_motor;   //云台yaw电机数据
     Gimbal_motor gimbal_pitch_motor; //云台pitch电机数据
+    Gimbal_motor telescopes_motor;//望远镜小云台pitch轴电机数据
 
     First_high_pass_filter gimbal_yaw_high_pass_filter;   //云台yaw电机一阶高通滤波
     First_high_pass_filter gimbal_pitch_high_pass_filter; //云台pitch电机一阶高通滤波

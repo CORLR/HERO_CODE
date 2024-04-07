@@ -228,7 +228,7 @@ void Can_receive::receive_cooling_and_id_board_com(uint8_t data[8])
 
 void Can_receive::receive_shoot_speed_and_mode_board_com(uint8_t data[8])
 {
-    gimbal_receive.shoot_speed_limit = 16;
+    gimbal_receive.shoot_speed_limit = (uint16_t)(data[0] << 8 | data[1]);
     gimbal_receive.bullet_speed = (uint16_t)(data[2] << 8 | data[3]);
     gimbal_receive.chassis_behaviour = data[4];
     gimbal_receive.game_progress = data[5];

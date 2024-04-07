@@ -708,6 +708,7 @@ void Gimbal::output()
 
     can_receive.can_cmd_yaw_motor(gimbal_yaw_motor.current_give);
     can_receive.can_cmd_pitch_motor(gimbal_pitch_motor.current_give);
+    can_receive.can_cmd_telescopes_motor(telescopes_motor.current_give);
 }
 /*****************************(C) CALI GIMBAL *******************************/
 /**
