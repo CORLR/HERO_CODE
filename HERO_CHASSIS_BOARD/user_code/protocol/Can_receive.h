@@ -38,9 +38,14 @@ typedef enum
   CAN_42MM_SPEED_BOARD_COM_ID = 0x304,
   CAN_UI_COM_ID = 0x305,
 
+  //导航数据接收ID
+  CAN_NAVI_COM_ID = 0x306,
+  CAN_NAVI_COM_ID_2 = 0x307,
+
   //超级电容接收ID
   CAN_SUPER_CAP_ID = 0x401,       //接收超电基础数据
   CAN_SUPER_CAP_ID_POWER = 0x402,//用于接收功率数据
+
 
 } can_msg_id_e;
 
@@ -166,6 +171,11 @@ public:
   void get_super_cap_data(uint8_t data[8]);
   // 获取超级电容功率
   void get_super_cap_data_power(uint8_t data[8]);
+
+  //获取导航数据
+  void receive_chassis_navi_data(uint8_t data[8]);
+  void receive_chassis_navi_data_2(uint8_t data[8]);
+
 };
 
 #endif

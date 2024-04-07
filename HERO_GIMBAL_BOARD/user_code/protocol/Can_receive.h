@@ -54,6 +54,8 @@ typedef enum
     CAN_COOLING_BOARM_COM_ID = 0x303,
     CAN_SHOOT_SPEED_BOARD_COM_ID = 0x304,
     CAN_UI_COM_ID = 0x305,
+    CAN_NAVI_COM_ID = 0x306,
+    CAN_NAVI_COM_ID_2 = 0x307,
 } can_msg_id_e;
 
 // rm motor data
@@ -148,6 +150,8 @@ public:
     void send_rc_board_com(int16_t ch_0, int16_t ch_2, int16_t ch_3, uint16_t v);            //发送遥控器数据
     void send_gimbal_board_com(uint8_t s0, uint8_t gimbal_behaviour, fp32 gimbal_yaw_angle); //发送云台模式及状态
     void send_UI_com(bool_t auto_s, bool_t aim_s, bool_t fric_s, fp32 gimbal_pitch_angle,uint16_t v,uint8_t gimbal_turn_flag);   //发送UI数据
+    void send_gimbal_navi_com(fp32 navi_x, fp32 navi_y);
+    void send_gimbal_navi_com_2(fp32 navi_z,uint8_t MODE);
 };
 
 #endif

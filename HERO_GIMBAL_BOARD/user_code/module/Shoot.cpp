@@ -728,7 +728,7 @@ void Shoot::output()
     trigger_motor.current_give = 0;
 #endif
     //发送电流
-    can_receive.can_cmd_shoot_motor(left_fric_motor.current_give, right_fric_motor.current_give, trigger_motor.current_give, telescopes_motor.current_give);
+    can_receive.can_cmd_shoot_motor(-left_fric_motor.current_give, -right_fric_motor.current_give, trigger_motor.current_give, telescopes_motor.current_give);
     can_receive.can_cmd_trigger_motor(trigger_motor.current_give);
 }
 /**

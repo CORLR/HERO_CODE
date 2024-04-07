@@ -69,7 +69,7 @@ void Communicate::run()
     referee.get_shooter_id1_42mm_cooling_rate(&temp_id1_42mm_cooling_rate);
     referee.get_color(&temp_color);
     referee.get_robot_id(&temp_robot_id);
-    // referee.get_shooter_id1_42mm_speed_limit_and_bullet_speed(&temp_id1_42mm_speed_limit, &temp_bullet_speed);
+    referee.get_shooter_id1_42mm_speed_limit_and_bullet_speed(&temp_id1_42mm_speed_limit, &temp_bullet_speed);
     temp_chassis_behaviour_mode = chassis.chassis_behaviour_mode;
 
     can_receive.send_cooling_and_id_board_com(temp_id1_42mm_cooling_limit, temp_id1_42mm_cooling_rate, temp_id1_42mm_cooling_heat,
@@ -152,6 +152,12 @@ extern "C"
                 break;
             case CAN_UI_COM_ID:
                 can_receive.receive_ui_board_com(rx_data);
+                break;
+            case CAN_NAVI_COM_ID:
+                can_receive.receive_chassis_navi_data(rx_data);
+                break;
+            case CAN_NAVI_COM_ID_2:
+                can_receive.receive_chassis_navi_data_2(rx_data);
                 break;
 
             default:

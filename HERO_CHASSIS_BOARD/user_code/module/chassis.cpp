@@ -96,6 +96,11 @@ void Chassis::init()
     z.min_speed = -NORMAL_MAX_CHASSIS_SPEED_Z;
     z.max_speed = NORMAL_MAX_CHASSIS_SPEED_Z;
 
+    chassis.chassis_navi.navi_x = 0;
+    chassis.chassis_navi.navi_y = 0;
+    chassis.chassis_navi.navi_z = 0;
+    chassis.chassis_navi.navi_MODE = 0;
+
     //更新一下数据
     feedback_update();
 }
@@ -181,57 +186,66 @@ void Chassis::set_contorl()
     //跟随云台模式
     if (chassis_mode == CHASSIS_VECTOR_FOLLOW_GIMBAL_YAW)
     {
-        fp32 sin_yaw = 0.0f, cos_yaw = 0.0f;
-        //旋转控制底盘速度方向，保证前进方向是云台方向，有利于运动平稳
-        sin_yaw = sin(-chassis_relative_angle);
-        cos_yaw = cos(-chassis_relative_angle);
+        if(chassis.chassis_navi.navi_MODE == 0)
+        {
+            fp32 sin_yaw = 0.0f, cos_yaw = 0.0f;
+            //旋转控制底盘速度方向，保证前进方向是云台方向，有利于运动平稳
+            sin_yaw = sin(-chassis_relative_angle);
+            cos_yaw = cos(-chassis_relative_angle);
 
-        if((can_receive.chassis_receive.gimbal_turn_flag == 1) || ((can_receive.chassis_receive.last_gimbal_turn_flag == 0) && (can_receive.chassis_receive.gimbal_turn_flag == 2)))
-        {
-        x.speed_set = -(cos_yaw * vx_set + sin_yaw * vy_set);
-        y.speed_set = -(-sin_yaw * vx_set + cos_yaw * vy_set);
-        }
+            if((can_receive.chassis_receive.gimbal_turn_flag == 1) || ((can_receive.chassis_receive.last_gimbal_turn_flag == 0) && (can_receive.chassis_receive.gimbal_turn_flag == 2)))
+            {
+            x.speed_set = -(cos_yaw * vx_set + sin_yaw * vy_set);
+            y.speed_set = -(-sin_yaw * vx_set + cos_yaw * vy_set);
+            }
 
-        if((can_receive.chassis_receive.gimbal_turn_flag == 0) || ((can_receive.chassis_receive.last_gimbal_turn_flag == 1) && (can_receive.chassis_receive.gimbal_turn_flag == 2)))
-        {
-        x.speed_set = cos_yaw * vx_set + sin_yaw * vy_set;
-        y.speed_set = -sin_yaw * vx_set + cos_yaw * vy_set;
-        }
-        
-        // if((can_receive.chassis_receive.gimbal_turn_flag == 1) || ((can_receive.chassis_receive.last_gimbal_turn_flag == 0) && (can_receive.chassis_receive.gimbal_turn_flag == 2)))
-        // {
-        // x.speed_set = -(cos_yaw * vx_set + sin_yaw * vy_set);
-        // y.speed_set = -(-sin_yaw * vx_set + cos_yaw * vy_set);
-        // }
+            if((can_receive.chassis_receive.gimbal_turn_flag == 0) || ((can_receive.chassis_receive.last_gimbal_turn_flag == 1) && (can_receive.chassis_receive.gimbal_turn_flag == 2)))
+            {
+            x.speed_set = cos_yaw * vx_set + sin_yaw * vy_set;
+            y.speed_set = -sin_yaw * vx_set + cos_yaw * vy_set;
+            }
+            
+            // if((can_receive.chassis_receive.gimbal_turn_flag == 1) || ((can_receive.chassis_receive.last_gimbal_turn_flag == 0) && (can_receive.chassis_receive.gimbal_turn_flag == 2)))
+            // {
+            // x.speed_set = -(cos_yaw * vx_set + sin_yaw * vy_set);
+            // y.speed_set = -(-sin_yaw * vx_set + cos_yaw * vy_set);
+            // }
 
-        if(can_receive.chassis_receive.gimbal_turn_flag != 2)
-        {
-        can_receive.chassis_receive.last_gimbal_turn_flag = can_receive.chassis_receive.gimbal_turn_flag;
-        }
-        //设置控制相对云台角度
-        chassis_relative_angle_set = rad_format(angle_set);
+            if(can_receive.chassis_receive.gimbal_turn_flag != 2)
+            {
+            can_receive.chassis_receive.last_gimbal_turn_flag = can_receive.chassis_receive.gimbal_turn_flag;
+            }
+            //设置控制相对云台角度
+            chassis_relative_angle_set = rad_format(angle_set);
 
-        //计算旋转PID角速度 如果是小陀螺,固定转速 如果是45度角对敌,选择固定角度
-        if (top_switch == TRUE)
-        {
-            z.speed_set = angle_set;
-            // fp32 temp_x_speed_set = x.speed_set;
-            // fp32 temp_y_speed_set = y.speed_set;
-            // fp32 temp_z_speed_set = z.speed_set;
-            // x.speed_set = move_top_xyz_parm[0] * x.max_speed * (temp_x_speed_set / sqrtf(pow(temp_x_speed_set, 2) + pow(temp_y_speed_set, 2) + 6 * pow(temp_z_speed_set, 2)));
-            // y.speed_set = move_top_xyz_parm[1] * y.max_speed * (temp_y_speed_set / sqrtf(pow(temp_x_speed_set, 2) + pow(temp_y_speed_set, 2) + 6 * pow(temp_z_speed_set, 2)));
-            // z.speed_set = move_top_xyz_parm[2] * z.max_speed * (temp_z_speed_set * 2.5 / sqrtf(pow(temp_x_speed_set, 2) + pow(temp_y_speed_set, 2) + 6 * pow(temp_z_speed_set, 2)));
+            //计算旋转PID角速度 如果是小陀螺,固定转速 如果是45度角对敌,选择固定角度
+            if (top_switch == TRUE)
+            {
+                z.speed_set = angle_set;
+                // fp32 temp_x_speed_set = x.speed_set;
+                // fp32 temp_y_speed_set = y.speed_set;
+                // fp32 temp_z_speed_set = z.speed_set;
+                // x.speed_set = move_top_xyz_parm[0] * x.max_speed * (temp_x_speed_set / sqrtf(pow(temp_x_speed_set, 2) + pow(temp_y_speed_set, 2) + 6 * pow(temp_z_speed_set, 2)));
+                // y.speed_set = move_top_xyz_parm[1] * y.max_speed * (temp_y_speed_set / sqrtf(pow(temp_x_speed_set, 2) + pow(temp_y_speed_set, 2) + 6 * pow(temp_z_speed_set, 2)));
+                // z.speed_set = move_top_xyz_parm[2] * z.max_speed * (temp_z_speed_set * 2.5 / sqrtf(pow(temp_x_speed_set, 2) + pow(temp_y_speed_set, 2) + 6 * pow(temp_z_speed_set, 2)));
+            }
+            // else if (pisa_switch = TRUE)
+            // {
+            //     chassis_wz_angle_pid.data.ref = &chassis_relative_angle;
+            //     chassis_wz_angle_pid.data.set = &chassis_relative_angle_set;
+            // }
+            else
+            {
+                chassis_wz_angle_pid.data.ref = &chassis_relative_angle;
+                chassis_wz_angle_pid.data.set = &chassis_relative_angle_set;
+                z.speed_set = -chassis_wz_angle_pid.pid_calc();
+            }
         }
-        // else if (pisa_switch = TRUE)
-        // {
-        //     chassis_wz_angle_pid.data.ref = &chassis_relative_angle;
-        //     chassis_wz_angle_pid.data.set = &chassis_relative_angle_set;
-        // }
-        else
+        else if(chassis.chassis_navi.navi_MODE == 1)
         {
-            chassis_wz_angle_pid.data.ref = &chassis_relative_angle;
-            chassis_wz_angle_pid.data.set = &chassis_relative_angle_set;
-            z.speed_set = -chassis_wz_angle_pid.pid_calc();
+            x.speed_set = chassis.chassis_navi.navi_x;
+            y.speed_set = chassis.chassis_navi.navi_y;
+            z.speed_set = chassis.chassis_navi.navi_z;
         }
 
         if (super_cap_switch == TRUE && top_switch == FALSE)
@@ -255,14 +269,6 @@ void Chassis::set_contorl()
         //速度限幅
         x.speed_set = fp32_constrain(vx_set, x.min_speed, x.max_speed);
         y.speed_set = fp32_constrain(vy_set, y.min_speed, y.max_speed);
-        if (super_cap_switch == TRUE && top_switch == FALSE)
-        {
-            chassis_power_limit_chag = CHASSIS_CAP_POWER; //修改功率上限
-        }  
-        else
-        {
-            chassis_power_limit_chag = chassis_power_limit;    //修改功率上限
-        }
     }
     else if (chassis_mode == CHASSIS_VECTOR_RAW)
     {
@@ -360,7 +366,6 @@ void Chassis::power_ctrl()
             can_receive.can_cmd_super_cap_power((uint16_t)(80),(uint16_t)chassis_power_buff,super_cap_switch);
         }
         //设置了机器人id后读取裁判系统对应数据
-        super_cap_switch = TRUE;
         
         //当超电百分比低于阈值5 将超电关闭
         if (can_receive.cap_receive.cap_percentage < 5.0)
@@ -375,7 +380,7 @@ void Chassis::power_ctrl()
     }
     else
     {
-        total_power = referee.power_heat_data_t.chassis_power;
+        total_power = can_receive.cap_receive.bat_power;
     }
 
     cap_increase = chassis_power_ctrl_pid.Increase_pid_calc();

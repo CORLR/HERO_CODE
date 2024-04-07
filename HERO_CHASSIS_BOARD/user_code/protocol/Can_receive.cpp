@@ -6,6 +6,8 @@
 #include "bsp_can.h"
 #include "can.h"
 
+#include "chassis.h"
+
 #include "struct_typedef.h"
 
 extern CAN_HandleTypeDef hcan1;
@@ -132,6 +134,28 @@ void Can_receive::get_super_cap_data_power(uint8_t data[8])
 {
     cap_receive.bat_power = ((float)((uint16_t)(data[0] << 8 | data[1])) / 100.0f);     //电容电压
     cap_receive.boot_out_power = ((float)((uint16_t)(data[2] << 8 | data[3])) / 100.0f);       //电容剩余百分比
+}
+/**
+ * @brief 导航数据1获取
+ * 
+ * @param data 
+ */
+
+void Can_receive::receive_chassis_navi_data(uint8_t data[8])
+{
+    chassis.chassis_navi.navi_x = (fp32)(int32_t)(data[0] << 24 | data[1] << 16 | data[2] << 8 | data[3]) / 1000;
+    chassis.chassis_navi.navi_y = (fp32)(int32_t)(data[4] << 24 | data[5] << 16 | data[6] << 8 | data[7]) / 1000;
+}
+
+/**
+ * @brief 导航数据2获取
+ * 
+ * @param data 
+ */
+void Can_receive::receive_chassis_navi_data_2(uint8_t data[8])
+{
+    chassis.chassis_navi.navi_z = (fp32)(int32_t)(data[0] << 24 | data[1] << 16 | data[2] << 8 | data[3]) / 1000;
+    chassis.chassis_navi.navi_MODE = (uint8_t)(data[4]);
 }
 
 void Can_receive::send_cooling_and_id_board_com(uint16_t id1_42mm_cooling_limit, uint16_t id1_42mm_cooling_rate, uint16_t id1_42mm_cooling_heat, uint8_t color, uint8_t robot_id)

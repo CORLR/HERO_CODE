@@ -210,6 +210,14 @@ struct speed_t
 };
 
 
+typedef struct
+{
+    float navi_x;
+    float navi_y;
+    float navi_z;
+    uint8_t navi_MODE;
+} chassis_navi_t;
+
 
 class Chassis {
 public:
@@ -223,6 +231,8 @@ public:
 
     chassis_mode_e chassis_mode; //底盘控制状态机
     chassis_mode_e last_chassis_mode; //底盘上次控制状态机
+
+    chassis_navi_t chassis_navi;    //底盘导航数据
 
     M3508_motor chassis_motive_motor[4]; //底盘动力电机数据
 

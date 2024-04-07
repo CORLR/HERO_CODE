@@ -501,13 +501,21 @@ void Gimbal::gimbal_chassis_control(fp32 *yaw, fp32 *pitch)
     }
     else
     {
-        static int16_t yaw_channel = 0, pitch_channel = 0;
+        if(gimbal.gimbal_navi.navi_MODE == 0)
+        {
+            static int16_t yaw_channel = 0, pitch_channel = 0;
 
-        rc_deadband_limit(gimbal_RC->rc.ch[YAW_CHANNEL], yaw_channel, RC_DEADBAND);
-        rc_deadband_limit(gimbal_RC->rc.ch[PITCH_CHANNEL], pitch_channel, RC_DEADBAND);
+            rc_deadband_limit(gimbal_RC->rc.ch[YAW_CHANNEL], yaw_channel, RC_DEADBAND);
+            rc_deadband_limit(gimbal_RC->rc.ch[PITCH_CHANNEL], pitch_channel, RC_DEADBAND);
 
-        *yaw = yaw_channel * YAW_RC_SEN + gimbal_RC->mouse.x * YAW_MOUSE_SEN;
-        *pitch = pitch_channel * PITCH_RC_SEN + gimbal_RC->mouse.y * PITCH_MOUSE_SEN;
+            *yaw = yaw_channel * YAW_RC_SEN + gimbal_RC->mouse.x * YAW_MOUSE_SEN;
+            *pitch = pitch_channel * PITCH_RC_SEN + gimbal_RC->mouse.y * PITCH_MOUSE_SEN;
+        }
+        else if(gimbal.gimbal_navi.navi_MODE == 1)
+        {
+            *pitch = 0;
+            *yaw = (YAW_TO_MID_SET - gimbal_yaw_motor.encode_angle) * GIMBAL_TO_MID_YAW_SPEED;
+        }
 
         //掉头控制
         turn_around_control(yaw);

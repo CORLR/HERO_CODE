@@ -58,29 +58,25 @@ void Communicate::run()
     temp_gimbal_pitch_angle = gimbal.gimbal_pitch_motor.encode_angle;
 
     can_receive.send_gimbal_board_com(temp_s0, temp_gimbal_behaviour_mode, temp_gimbal_yaw_angle);
+    can_receive.send_gimbal_navi_com(gimbal.gimbal_navi.navi_x,gimbal.gimbal_navi.navi_y);
+    can_receive.send_gimbal_navi_com_2(gimbal.gimbal_navi.navi_z,gimbal.gimbal_navi.navi_MODE);
     //拨轮值判断是否进入小陀螺模式和扭腰
     if(remote_control.rc_ctrl.rc.ch[4] > 600 && ch4 == 1)
     {
-        temp_v = 512;//对应键盘值"F"
+        gimbal.gimbal_navi.navi_MODE = 1;
         ch4 = 0;
     }
     else if(remote_control.rc_ctrl.rc.ch[4] < -600 && ch4 == 1)
     {
-        if(shoot.telescopes_mode == TELESCOPES_CLOSE)
-        {
-            shoot.telescopes_mode = TELESCOPES_OPEN;
-        }
-        else if(shoot.telescopes_mode == TELESCOPES_OPEN)
-        {
-            shoot.telescopes_mode = TELESCOPES_CLOSE;
-        }
-        //temp_v = 8192;//对应键盘值"C"
+        gimbal.gimbal_navi.navi_MODE = 0;   
         ch4 = 0;
     }
     else if(remote_control.rc_ctrl.rc.ch[4] == 0)
     {
         ch4 = 1;
     }
+
+
     if (game_start())
     {
         can_receive.send_UI_com(temp_auto, temp_aim, temp_fric, temp_gimbal_pitch_angle, temp_v,gimbal.gimbal_turn_flag);

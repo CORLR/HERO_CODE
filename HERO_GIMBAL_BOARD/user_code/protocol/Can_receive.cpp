@@ -286,6 +286,50 @@ void Can_receive::send_gimbal_board_com(uint8_t s0, uint8_t gimbal_behaviour, fp
     HAL_CAN_AddTxMessage(&BOARD_COM_CAN, &can_tx_message, can_send_data, &send_mail_box);
 }
 
+
+void Can_receive::send_gimbal_navi_com(fp32 navi_x, fp32 navi_y)
+{
+    int32_t temp_navi_x = (int32_t)(navi_x * 1000);
+    int32_t temp_navi_y = (int32_t)(navi_y * 1000);
+    
+    uint32_t send_mail_box;
+    can_tx_message.StdId = CAN_NAVI_COM_ID;
+    can_tx_message.IDE = CAN_ID_STD;
+    can_tx_message.RTR = CAN_RTR_DATA;
+    can_tx_message.DLC = 0x08;
+    can_send_data[0] = (uint8_t)((int32_t)temp_navi_x >> 24);
+    can_send_data[1] = (uint8_t)((int32_t)temp_navi_x >> 16);
+    can_send_data[2] = (uint8_t)((int32_t)temp_navi_x >> 8);
+    can_send_data[3] = (uint8_t)((int32_t)temp_navi_x );
+    can_send_data[4] = (uint8_t)((int32_t)temp_navi_y >> 24);
+    can_send_data[5] = (uint8_t)((int32_t)temp_navi_y >> 16);
+    can_send_data[6] = (uint8_t)((int32_t)temp_navi_y >> 8);
+    can_send_data[7] = (uint8_t)((int32_t)temp_navi_y );
+
+    HAL_CAN_AddTxMessage(&BOARD_COM_CAN, &can_tx_message, can_send_data, &send_mail_box);
+}
+
+void Can_receive::send_gimbal_navi_com_2(fp32 navi_z, uint8_t MODE)
+{
+    int32_t temp_navi_z = (int32_t)(navi_z * 1000);
+
+    uint32_t send_mail_box;
+    can_tx_message.StdId = CAN_NAVI_COM_ID_2;
+    can_tx_message.IDE = CAN_ID_STD;
+    can_tx_message.RTR = CAN_RTR_DATA;
+    can_tx_message.DLC = 0x08;
+    can_send_data[0] = (uint8_t)((int32_t)temp_navi_z >> 24);
+    can_send_data[1] = (uint8_t)((int32_t)temp_navi_z >> 16);
+    can_send_data[2] = (uint8_t)((int32_t)temp_navi_z >> 8);
+    can_send_data[3] = (uint8_t)((int32_t)temp_navi_z );
+    can_send_data[4] = MODE;
+    can_send_data[5] = 0;
+    can_send_data[6] = 0;
+    can_send_data[7] = 0;
+
+    HAL_CAN_AddTxMessage(&BOARD_COM_CAN, &can_tx_message, can_send_data, &send_mail_box);
+}
+
 void Can_receive::send_UI_com(bool_t auto_s, bool_t aim_s, bool_t fric_s, fp32 gimbal_pitch_angle, uint16_t v,uint8_t gimbal_turn_flag)
 {
     int16_t temp_gimbal_pitch_angle = (int16_t)(gimbal_pitch_angle * 1000);

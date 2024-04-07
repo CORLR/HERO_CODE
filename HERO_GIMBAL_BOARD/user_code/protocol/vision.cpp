@@ -90,23 +90,12 @@ void vision_read_data(uint8_t *ReadFormUart)
  //判断帧头数据是否为0xA5
  if (ReadFormUart[0] == VISION_BEGIN)
  {
-   //判断帧头数据是否为0xff
-   if (ReadFormUart[17] == VISION_END)
-   {
-
      //接收数据拷贝
-     memcpy(&VisionRecvData, ReadFormUart, VISION_READ_LEN_PACKED);
-
-     if (VisionRecvData.identify_target == TRUE)
-       if_identify_target = TRUE; // 识别到装甲板
-     else
-       if_identify_target = FALSE; // 未识别到装甲板
-
+     memcpy(&gimbal.gimbal_navi, ReadFormUart, sizeof(ReadFormUart));
      // //帧计算
      // Vision_Time_Test[NOW] = xTaskGetTickCount();
      // Vision_Ping = Vision_Time_Test[NOW] - Vision_Time_Test[LAST];//计算时间间隔
      // Vision_Time_Test[LAST] = Vision_Time_Test[NOW];
-   }
  }
 }
 

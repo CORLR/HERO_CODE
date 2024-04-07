@@ -117,7 +117,7 @@ extern "C"
 
 //电机正反装所对应的
 #define YAW_TURN 0
-#define PITCH_TURN 1
+#define PITCH_TURN 0
 
 //电机码盘值半圈的编码值
 #define HALF_ECD_RANGE 4096
@@ -125,8 +125,8 @@ extern "C"
 #define ECD_RANGE 8191
 
 //云台中值(中值所对应的编码器编码值)
-#define ECD_YAW_MID 3747//反向7835
-#define ECD_PITCH_MID 4292
+#define ECD_YAW_MID 4365//反向7835
+#define ECD_PITCH_MID 5443
 #define ECD_YAW_REAR_MID 7835
 //限幅
 #define MAX_GYRO_YAW 2*PI
@@ -211,6 +211,14 @@ typedef struct
     uint8_t step;
 } gimbal_step_cali_t;
 
+typedef struct
+{
+    float navi_x;
+    float navi_y;
+    float navi_z;
+    uint8_t navi_MODE;
+} gimbal_navi_t;
+
 class Gimbal
 {
 public:
@@ -228,6 +236,8 @@ public:
 
     gimbal_mode_e gimbal_mode;      //云台行为模式
     gimbal_mode_e last_gimbal_mode; //云台上次控制状态机
+
+    gimbal_navi_t gimbal_navi;      //云台导航数据
 
     Gimbal_motor gimbal_yaw_motor;   //云台yaw电机数据
     Gimbal_motor gimbal_pitch_motor; //云台pitch电机数据
