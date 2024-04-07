@@ -1,0 +1,14 @@
+{
+    "files.associations": {
+        "*.tcc": "cpp",
+        "cmath": "cpp",
+        "unordered_map": "cpp",
+        "fstream": "cpp",
+        "istream": "cpp",
+        "ostream": "cpp",
+        "sstream": "cpp",
+        "bsp_buzzer.h": "c",
+        "xstring": "cpp",
+        "crc8_crc16.h": "c"
+    }
+}
